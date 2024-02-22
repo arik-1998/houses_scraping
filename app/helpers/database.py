@@ -4,18 +4,11 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 
 engine = create_async_engine(
-    'sqlite+aiosqlite:///houses.db'
+    'sqlite+aiosqlite:///app/houses.db'
 )
 
 new_session = async_sessionmaker(engine, expire_on_commit=False)
 
-
-def get_db():
-    db = new_session()
-    try:
-        yield db
-    finally:
-        db.close()
 
 class BaseDBModel(DeclarativeBase):
     __abstract__ = True

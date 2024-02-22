@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
-from schema import HousesSchema
-from crud import HousesCRUD
+from app.routers.houses.schema import HousesSchema
+from app.routers.houses.crud import HousesCRUD
 
 router = APIRouter()
 

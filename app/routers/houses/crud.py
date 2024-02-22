@@ -1,6 +1,6 @@
-from database import new_session
-from schema import HousesSchema
-from models import Houses
+from app.helpers.database import new_session
+from app.routers.houses.schema import HousesSchema
+from app.routers.houses.models import Houses
 
 class HousesCRUD():
     @classmethod

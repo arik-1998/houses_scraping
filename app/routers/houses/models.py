@@ -1,5 +1,5 @@
 import enum
-from database import BaseDBModel
+from app.helpers.database import BaseDBModel
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import ENUM as SQLAlchemyEnum
 from sqlalchemy import Column, Integer, String, Boolean

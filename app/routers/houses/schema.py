@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from models import HousingTypes
+from app.routers.houses.models import HousingTypes
 
 class HousesSchema(BaseModel):
     housing_type: HousingTypes
