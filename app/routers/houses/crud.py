@@ -1,12 +1,16 @@
-from app.helpers.database import new_session
+from sqlalchemy.orm import Session
 from app.routers.houses.schema import HousesSchema
 from app.routers.houses.models import Houses
 
+def insert_data(db: Session, instance):
+    db.add(instance)
+    db.commit()
+    db.refresh(instance)
+    return instance
+
 class HousesCRUD():
     @classmethod
-    async def add_house(cls, data:HousesSchema):
-        async with new_session() as session:
-            house_dict = data.model_dump()
-            house = Houses(**house_dict)
-            session.add(house)
-            await session.commit()
+    def add_house(cls, data:HousesSchema, db):
+        house_dict = data.model_dump()
+        house = Houses(**house_dict)
+        insert_data(db, house)

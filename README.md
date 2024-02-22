@@ -1,5 +1,7 @@
 # houses_scraping
 
-1) install requirements:  pip install -r ./requirements.txt
+1) create .env from env_template
 
-2) run uvicorn: uvicorn app.main:app --reload
+2) build app: docker compose build
+
+3) run app: docker compose up

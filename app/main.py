@@ -1,15 +1,13 @@
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-from .helpers.database import create_tables, delete_tables
+from fastapi import status
 from .routers.houses.router import router
+from app.helpers.database import create_database
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    await delete_tables() #for testing
-    await create_tables()
-    yield
-
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 app.include_router(router)
+
+@app.post('/create_database')
+async def route_create_database():
+    create_database()
+    return {"code": status.HTTP_200_OK}
 
