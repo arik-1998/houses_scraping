@@ -11,6 +11,5 @@ def insert_data(db: Session, instance):
 class HousesCRUD():
     @classmethod
     def add_house(cls, data:HousesSchema, db):
-        house_dict = data.model_dump()
-        house = Houses(**house_dict)
+        house = Houses(**data)
         insert_data(db, house)
