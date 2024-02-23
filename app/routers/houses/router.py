@@ -1,16 +1,15 @@
-from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from app.helpers.database import get_db
-from app.routers.houses.schema import HousesSchema
-from app.routers.houses.crud import HousesCRUD
-from app.routers.houses.scrap import get_page_info
+from app.routers.houses.async_scraper import async_scraper
+from app.routers.houses.scraper import get_page_info
 
 router = APIRouter()
 
-@router.post("/add_house")
-async def add_house(house:Annotated[HousesSchema, Depends()], db: Session = Depends(get_db)):
-    HousesCRUD.add_house(house, db)
+
+@router.post("/async_scrap_data")
+async def async_scrap_data(db: Session = Depends(get_db)):
+    await async_scraper(db)
     return {"code": status.HTTP_200_OK}
 
 
