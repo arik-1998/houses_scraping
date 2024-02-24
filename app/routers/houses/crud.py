@@ -9,7 +9,14 @@ def insert_data(db: Session, instance):
     return instance
 
 class HousesCRUD():
+
     @classmethod
-    def add_house(cls, data:HousesSchema, db):
+    def add_house(cls, data:HousesSchema, db: Session):
         house = Houses(**data)
         insert_data(db, house)
+
+
+    @classmethod
+    def read_houses(cls, db: Session):
+        return db.query(Houses).first()
+        

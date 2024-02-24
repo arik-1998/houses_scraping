@@ -1,4 +1,5 @@
 import time
+import json
 import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
@@ -24,20 +25,22 @@ async def get_house_info(session, url, headers, db):
             return None
         adress = soup.find(class_="loc").text if soup.find(class_="loc") != None else None
         price = soup.find(class_="price x").text if soup.find(class_="price x") != None else None
-        condition = short_house_info[1].find(class_="i").text
-        building_type = short_house_info[2].find(class_="i").text 
-        area = short_house_info[3].find(class_="i").text 
-        rooms_count = short_house_info[5].find(class_="i").text 
+
+        about_house = {}
+        for i in short_house_info:
+            key = i.find(class_="t").text
+            value = i.find(class_="i").text
+            about_house[key] = value
+
+        about_house_json = json.dumps(about_house, ensure_ascii=False)
 
         data = {
             "housing_type": HousingTypes.house.value,
             "url": url,
             "adress": adress,
             "price": price,
-            "condition": condition,
-            "building_type": building_type,
-            "area": area,
-            "rooms_count": rooms_count,
+            "short_info": about_house_json
+
         }
 
         HousesCRUD.add_house(data, db)

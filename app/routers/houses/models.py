@@ -2,7 +2,7 @@ import enum
 from app.helpers.database import BaseDBModel
 from sqlalchemy import Column
 from sqlalchemy.dialects.postgresql import ENUM as SQLAlchemyEnum
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, JSON
 
 
 class HousingTypes(str, enum.Enum):
@@ -18,7 +18,4 @@ class Houses(BaseDBModel):
     url = Column(String)
     adress = Column(String)
     price = Column(String)
-    condition = Column(String)
-    building_type = Column(String)
-    area = Column(String)
-    rooms_count = Column(String)
+    short_info = Column(JSON)
