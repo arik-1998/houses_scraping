@@ -19,3 +19,6 @@ class Houses(BaseDBModel):
     adress = Column(String)
     price = Column(String)
     short_info = Column(JSON)
+    land_info = Column(String)
+    created_statement = Column(String)
+    updated_statement = Column(String)

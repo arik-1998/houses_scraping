@@ -34,13 +34,21 @@ async def get_house_info(session, url, headers, db):
 
         about_house_json = json.dumps(about_house, ensure_ascii=False)
 
+        land_info = soup.find_all(class_="attr g")[1].find(class_="i").text if soup.find_all(class_="attr g")[1] != None else None
+
+        date_info = soup.find(class_="footer").text.split("Տեղադրված է ")[1].split("Թարմացվել է ")
+        if len(date_info) == 1:
+            date_info.append(None)
+
         data = {
             "housing_type": HousingTypes.house.value,
             "url": url,
             "adress": adress,
             "price": price,
-            "short_info": about_house_json
-
+            "short_info": about_house_json,
+            "land_info": land_info,
+            "created_statement": date_info[0],
+            "updated_statement": date_info[1],
         }
 
         HousesCRUD.add_house(data, db)
