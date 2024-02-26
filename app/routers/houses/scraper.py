@@ -31,7 +31,8 @@ def get_house_info(url, headers, db):
         about_house[key] = value
     about_house_json = json.dumps(about_house, ensure_ascii=False)
 
-    land_info = soup.find_all(class_="attr g")[1].find(class_="i").text if soup.find_all(class_="attr g")[1] != None else None
+    if soup.find_all(class_="attr g") != None:
+        land_info = soup.find_all(class_="attr g")[1].find(class_="i").text if soup.find_all(class_="attr g")[1] != None else None
 
     date_info = soup.find(class_="footer").text.split("Տեղադրված է ")[1].split("Թարմացվել է ")
     if len(date_info) == 1:
