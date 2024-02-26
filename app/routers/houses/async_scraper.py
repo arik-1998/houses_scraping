@@ -17,6 +17,7 @@ async def get_house_info(session, url, headers, db):
         soup = BeautifulSoup(response_text, "lxml")
         short_house_info = soup.find(class_="attr g").find_all(class_=("c")) if soup.find(class_="attr g") != None else None
         if short_house_info == None:
+            print(url)
             global flag_for_log
             if flag_for_log:
                 with open("logs/log_async_"+url.split("/")[4] + "_" + str(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())) + ".txt", "w") as file:
@@ -34,7 +35,8 @@ async def get_house_info(session, url, headers, db):
 
         about_house_json = json.dumps(about_house, ensure_ascii=False)
 
-        land_info = soup.find_all(class_="attr g")[1].find(class_="i").text if soup.find_all(class_="attr g")[1] != None else None
+        # land_info = soup.find_all(class_="attr g")[1].find(class_="i").text if soup.find_all(class_="attr g")[1] != None else None
+        land_info = "ankap"
 
         date_info = soup.find(class_="footer").text.split("Տեղադրված է ")[1].split("Թարմացվել է ")
         if len(date_info) == 1:
@@ -51,7 +53,7 @@ async def get_house_info(session, url, headers, db):
             "updated_statement": date_info[1],
         }
 
-        HousesCRUD.add_house(data, db)
+        await HousesCRUD.add_house(data, db)
         
 
 async def get_page_info(db):
