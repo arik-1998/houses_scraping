@@ -35,8 +35,7 @@ async def get_house_info(session, url, headers, db):
 
         about_house_json = json.dumps(about_house, ensure_ascii=False)
 
-        # land_info = soup.find_all(class_="attr g")[1].find(class_="i").text if soup.find_all(class_="attr g")[1] != None else None
-        land_info = "ankap"
+        land_info = soup.find_all(class_="attr g")[1].find(class_="i").text if soup.find_all(class_="attr g")[1] != None else None
 
         date_info = soup.find(class_="footer").text.split("Տեղադրված է ")[1].split("Թարմացվել է ")
         if len(date_info) == 1:
@@ -68,20 +67,22 @@ async def get_page_info(db):
                 "User-Agent":ua.random
                 }      
       
+    try:
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url=url, headers=get_headers())
+            soup = BeautifulSoup(await response.text(), "lxml")
+            all_houses = soup.find_all(class_="dl")[1].find(class_="gl")
 
-    async with aiohttp.ClientSession() as session:
-        response = await session.get(url=url, headers=get_headers())
-        soup = BeautifulSoup(await response.text(), "lxml")
-        all_houses = soup.find_all(class_="dl")[1].find(class_="gl")
+            tasks = []
 
-        tasks = []
+            for element in all_houses:
+                house_href = "https://www.list.am" + element.get("href")
+                task = asyncio.create_task(get_house_info(session, house_href, get_headers(), db))
+                tasks.append(task)
 
-        for element in all_houses:
-            house_href = "https://www.list.am" + element.get("href")
-            task = asyncio.create_task(get_house_info(session, house_href, get_headers(), db))
-            tasks.append(task)
-
-        await asyncio.gather(*tasks)
+            await asyncio.gather(*tasks)
+    except Exception as e:
+        print(e)
 
                 
 
