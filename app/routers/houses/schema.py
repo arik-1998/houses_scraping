@@ -12,7 +12,7 @@ class HousesSchema(BaseModel):
     updated_statement: str | None
 
 
-class ReadHousesSchema(HousesSchema):
+class ReadHouseSchema(BaseModel):
     id: int
     housing_type: HousingTypes 
     url: str
@@ -22,3 +22,7 @@ class ReadHousesSchema(HousesSchema):
     land_info: str | None
     created_statement: str
     updated_statement: str | None
+
+
+class ReadHousesSchema(BaseModel):
+    data: list[ReadHouseSchema]

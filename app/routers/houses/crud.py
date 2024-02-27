@@ -1,22 +1,27 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from app.routers.houses.schema import HousesSchema
 from app.routers.houses.models import Houses
+from sqlalchemy.ext.asyncio import AsyncSession
 
-def insert_data(db: Session, instance):
-    db.add(instance)
-    db.commit()
-    db.refresh(instance)
-    return instance
 
 class HousesCRUD():
 
     @classmethod
-    def add_house(cls, data:HousesSchema, db: Session):
+    async def add_house(cls, data:HousesSchema, db: AsyncSession):
         house = Houses(**data)
-        insert_data(db, house)
+        db.add(house)
 
 
     @classmethod
-    def read_houses(cls, db: Session):
-        return db.query(Houses).first()
+    async def read_houses(cls, db: Session):
+        query = select(Houses)
+        result = await db.execute(query)
+        return result.scalars().all()
+    
+
+    @classmethod
+    def add_house_syncron(cls, data:HousesSchema, db: AsyncSession):
+        house = Houses(**data)
+        db.add(house)
         

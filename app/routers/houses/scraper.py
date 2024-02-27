@@ -49,32 +49,35 @@ def get_house_info(url, headers, db):
         "updated_statement": date_info[1],
     }
 
-    HousesCRUD.add_house(data, db)
+    HousesCRUD.add_house_syncron(data, db)
 
 def get_page_info(db):
+    try:
+        ua = UserAgent()
 
-    ua = UserAgent()
+        def headers():
+            return  {
+                    "Accept":"*/*",
+                    "User-Agent":ua.random
+                    }       
 
-    def headers():
-        return  {
-                "Accept":"*/*",
-                "User-Agent":ua.random
-                }       
+        url = "https://www.list.am/category/62"
+        req = requests.get(url, headers=headers())
+        soup = BeautifulSoup(req.text, "lxml")
 
-    url = "https://www.list.am/category/62"
-    req = requests.get(url, headers=headers())
-    soup = BeautifulSoup(req.text, "lxml")
+        all_houses = soup.find_all(class_="dl")[1].find(class_="gl")
 
-    all_houses = soup.find_all(class_="dl")[1].find(class_="gl")
+        start_time = time.time()
 
-    start_time = time.time()
+        for element in all_houses:
+            house_href = "https://www.list.am" + element.get("href")
+            get_house_info(house_href, headers(), db)
 
-    for element in all_houses:
-        house_href = "https://www.list.am" + element.get("href")
-        get_house_info(house_href, headers(), db)
+        end_time = time.time()
 
-    end_time = time.time()
+        print("============", end_time - start_time, "===========")
 
-    print("============", end_time - start_time, "===========")
+    except Exception as e:
+        print(e)
         
 
