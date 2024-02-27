@@ -7,6 +7,8 @@ from fake_useragent import UserAgent
 from app.routers.houses.crud import HousesCRUD
 from app.routers.houses.models import HousingTypes
 from app.helpers.utils import extract_dates
+from loguru import logger
+
 
 
 async def get_house_info(session, url, headers, db):
@@ -89,7 +91,7 @@ async def get_page_info(db):
 
             await asyncio.gather(*tasks)
     except Exception as e:
-        print(e)
+        logger.error(e)
 
                 
 

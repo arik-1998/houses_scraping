@@ -6,6 +6,10 @@ from app.routers.houses.scraper import get_page_info
 from app.routers.houses.crud import HousesCRUD
 from app.routers.houses.schema import ReadHousesSchema
 from sqlalchemy.ext.asyncio import AsyncSession
+from loguru import logger
+
+logger.add("logs/debug.json", format="{time}{level}{message}", level="DEBUG", rotation="10 MB", compression="zip", serialize=True)
+logger.add("logs/debug.log", format="{time}/{level}/{message}", level="DEBUG", rotation="10 MB", compression="zip")
 
 router = APIRouter()
 
