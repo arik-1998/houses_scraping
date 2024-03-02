@@ -11,3 +11,5 @@ aiohttp==3.9.3
 alembic==1.13.1
 asyncpg==0.29.0
 loguru==0.7.2
+fastui==0.5.2
+python-multipart==0.0.9

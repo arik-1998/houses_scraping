@@ -1,6 +1,7 @@
 from fastapi import FastAPI
-from fastapi import status
-from .routers.houses.router import router
+from app.routers.houses import router
+from app.routers.admin import admin
 
 app = FastAPI()
-app.include_router(router)
+app.include_router(router.router)
+app.include_router(admin.router)
