@@ -1,10 +1,11 @@
 from pydantic import BaseModel, Json
 from app.routers.houses.models import HousingTypes
 
+
 class HousesSchema(BaseModel):
-    housing_type: HousingTypes 
+    housing_type: HousingTypes
     url: str
-    adress: str | None
+    address: str | None
     price: str | None
     short_info: Json | None
     land_info: str | None
@@ -14,9 +15,9 @@ class HousesSchema(BaseModel):
 
 class ReadHouseSchema(BaseModel):
     id: int
-    housing_type: HousingTypes 
+    housing_type: HousingTypes
     url: str
-    adress: str | None
+    address: str | None
     price: str | None
     short_info: Json | None
     land_info: str | None

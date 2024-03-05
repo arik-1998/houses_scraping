@@ -10,9 +10,7 @@ from app.helpers.utils import extract_dates
 from loguru import logger
 
 
-
 async def get_house_info(session, url, headers, db):
-
     async with session.get(url, headers=headers) as response:
         response_text = await response.text()
 
@@ -23,35 +21,38 @@ async def get_house_info(session, url, headers, db):
         else:
             return None
 
-        try: 
+        try:
             about_house = {}
             for i in short_house_info:
-                key = i.find(class_="t").text.replace(" ","_").lower()
+                key = i.find(class_="t").text.replace(" ", "_").lower()
                 value = i.find(class_="i").text
                 about_house[key] = value
-        except: about_house = {}
-        
+        except:
+            about_house = {}
+
         about_house_json = json.dumps(about_house, ensure_ascii=False)
 
         try:
-            adress = soup.find(class_="loc").text
-        except: adress = None
+            address = soup.find(class_="loc").text
+        except:
+            address = None
 
         try:
             price = soup.find(class_="price x").text
-        except: price = None
-
+        except:
+            price = None
 
         try:
             land_info = soup.find_all(class_="attr g")[1].find(class_="i").text
-        except: land_info=None
+        except:
+            land_info = None
 
         date_info = extract_dates(soup.find(class_="footer").text)
 
         data = {
             "housing_type": HousingTypes.house.value,
             "url": url,
-            "adress": adress,
+            "address": address,
             "price": price,
             "short_info": about_house_json,
             "land_info": land_info,
@@ -60,22 +61,21 @@ async def get_house_info(session, url, headers, db):
         }
 
         await HousesCRUD.add_house(data, db)
-        
+
 
 async def get_page_info(db):
-
     ua = UserAgent()
 
     page_number = 1
 
-    url = f"https://www.list.am/en/category/62/{page_number}?type=1&n=0&sid=0" #english page with filter by "search" (not want)
+    url = f"https://www.list.am/en/category/62/{page_number}?type=1&n=0&sid=0"  # english page with filter by "search" (not want)
 
     def get_headers():
-        return  {
-                "Accept":"*/*",
-                "User-Agent":ua.random
-                }      
-      
+        return {
+            "Accept": "*/*",
+            "User-Agent": ua.random
+        }
+
     try:
         async with aiohttp.ClientSession() as session:
             response = await session.get(url=url, headers=get_headers())
@@ -93,7 +93,6 @@ async def get_page_info(db):
     except Exception as e:
         logger.error(e)
 
-                
 
 async def async_scraper(db):
     start_time = time.time()
@@ -102,4 +101,3 @@ async def async_scraper(db):
 
     end_time = time.time()
     print("============", end_time - start_time, "===========")
-

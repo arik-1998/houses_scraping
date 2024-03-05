@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: bb9c41a9b771
+Revision ID: ba46964497b9
 Revises: 
-Create Date: 2024-02-26 07:05:53.949321
+Create Date: 2024-03-05 21:17:20.890983
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'bb9c41a9b771'
+revision: str = 'ba46964497b9'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -24,7 +24,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('housing_type', postgresql.ENUM('house', 'apartment', name='housingtypes'), nullable=True),
     sa.Column('url', sa.String(), nullable=True),
-    sa.Column('adress', sa.String(), nullable=True),
+    sa.Column('address', sa.String(), nullable=True),
     sa.Column('price', sa.String(), nullable=True),
     sa.Column('short_info', sa.JSON(), nullable=True),
     sa.Column('land_info', sa.String(), nullable=True),
