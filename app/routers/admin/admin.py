@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends, Header, FastAPI
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import HTMLResponse
 from fastui import FastUI, AnyComponent, prebuilt_html, components as c
@@ -11,6 +11,8 @@ from fastapi.encoders import jsonable_encoder
 from app.helpers.utils import is_signed_middleware
 from app.settings import OWNER_PASSWORD
 
+app = FastAPI()
+
 router = APIRouter()
 
 
@@ -19,19 +21,35 @@ def sign_in():
     return [
         c.Page(
             components=[
-                c.Button(text="Sign in imitation", on_click=AuthEvent(token=OWNER_PASSWORD, url="/houses"))
-                # c.Form(
-                #     submit_url="/api/houses",
-                #     form_fields=[c.FormFieldInput(name="sign_in", title="Please enter your password", required=True)],
-                # )
+                c.Form(
+                    submit_url="/sign_in",
+                    method="GOTO",
+                    form_fields=[c.FormFieldInput(name="password", title="Please enter your password", required=True)],
+
+                )
             ]
         )
     ]
 
 
+@router.get("/api/sign_in", response_model=FastUI, response_model_exclude_none=True)
+async def auth(password: str):
+    token = f"Token {password}"
+    headers = {"Authorization": token}
+
+    if token == OWNER_PASSWORD:
+        return c.FireEvent(event=AuthEvent(token=password, url="/houses"))
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+
 @router.get("/api/houses", response_model=FastUI, response_model_exclude_none=True)
 @is_signed_middleware
-async def users_table(db: AsyncSession = Depends(get_db), authorization: str = Header(...)) -> list[AnyComponent]:
+async def houses_table(authorization: str = Header(...), db: AsyncSession = Depends(get_db)) -> list[AnyComponent]:
+    token = authorization.split(" ")[1]
+
+    obj_type = "house"
+
     house_data = await HousesCRUD.read_houses(db)
 
     houses = GetHousesSchema(data=jsonable_encoder(house_data)).data
@@ -49,7 +67,7 @@ async def users_table(db: AsyncSession = Depends(get_db), authorization: str = H
                     data_model=GetHousesSchema,
                     no_data_message="No houses found",
                     columns=[
-                        DisplayLookup(field='id', on_click=GoToEvent(url='/house/{id}/')),
+                        DisplayLookup(field='id', on_click=GoToEvent(url=f'/{{id}}/{token}/{obj_type}')),
                         DisplayLookup(field='address'),
                         DisplayLookup(field='price'),
                         DisplayLookup(field='created_statement'),
@@ -61,8 +79,15 @@ async def users_table(db: AsyncSession = Depends(get_db), authorization: str = H
     ]
 
 
+@router.get("/api/{house_id}/{token}/{obj_type}", response_model=FastUI, response_model_exclude_none=True)
+async def tokenized(house_id: int, token: str, obj_type: str):
+    return c.FireEvent(event=AuthEvent(token=token, url=f"/{obj_type}/{house_id}/"))
+
+
 @router.get("/api/house/{house_id}/", response_model=FastUI, response_model_exclude_none=True)
-async def user_profile(house_id: int, db: AsyncSession = Depends(get_db)) -> list[AnyComponent]:
+@is_signed_middleware
+async def user_profile(house_id: int, db: AsyncSession = Depends(get_db), authorization: str = Header(...)) -> list[AnyComponent]:
+
     house_data = await HousesCRUD.read_houses(db)
 
     houses = GetHouseInfoSchema(data=jsonable_encoder(house_data)).data
@@ -76,7 +101,6 @@ async def user_profile(house_id: int, db: AsyncSession = Depends(get_db)) -> lis
             components=[
                 c.Heading(text='House', level=2),
                 c.Heading(text=("Id: " + str(house.id)), level=3),
-                c.Link(components=[c.Text(text='Back')], on_click=BackEvent()),
                 c.Details(data=house, fields=[
                     DisplayLookup(field='url'),
                     DisplayLookup(field='address'),
