@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  houses:
+    container_name: houses
+    image: houses
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:15.2-alpine
+    container_name: postgres-houses
+    restart: always
+    environment:
+      - POSTGRES_USER=houses
+      - POSTGRES_PASSWORD=houses1234
+      - POSTGRES_DB=houses
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+volumes:
+  postgres_data:

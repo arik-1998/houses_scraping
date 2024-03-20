@@ -1,0 +1,7 @@
+ENV=local
+
+DB_USER=houses
+DB_PASSWORD=houses1234
+DB_NAME=houses
+DB_HOST=postgres
+DB_PORT=5432
