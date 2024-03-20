@@ -1,7 +1,4 @@
 import re
-from functools import wraps
-from fastapi import Header, status, HTTPException
-from app.settings import OWNER_PASSWORD
 
 
 def extract_dates(string):
@@ -18,12 +15,3 @@ def extract_dates(string):
             return {"creating": creating_date, "updating": updating_date}
     
     return None
-
-
-def is_signed_middleware(endpoint):
-    @wraps(endpoint)
-    async def middleware(*args, authorization: str, **kwargs):
-        if authorization != OWNER_PASSWORD:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
-        return await endpoint(*args, authorization=authorization, **kwargs)
-    return middleware
